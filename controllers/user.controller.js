@@ -1,4 +1,5 @@
-const { User } = require('../database/models');
+const { User, Song, Emotion, Recommendation } = require('../database/models');
+const { Sequelize } = require('../database/config')
 
 //Sign up: register user
 exports.postUser = async (req, res) => {
@@ -19,3 +20,59 @@ exports.postUser = async (req, res) => {
         res.status(500).json({error: error});
     }
 }
+
+//Get user history
+exports.getUserHistory = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    const recommendations = await Recommendation.findAll({
+      where: { userId },
+      include: [
+        {
+          model: Song,
+          attributes: ["songName", "artist"],
+          include: [
+            {
+              model: Emotion,
+              attributes: ["label"],
+            },
+          ],
+        },
+      ],
+      attributes: ["createdAt"],
+      order: [["createdAt", "DESC"]],
+    });
+
+    const grouped = {};
+
+    recommendations.forEach((rec) => {
+      const key = new Date(rec.createdAt).toISOString();
+      const emotionName = rec.Song.Emotion.label;
+
+      if (!grouped[key]) {
+        grouped[key] = {
+          emotion: emotionName,
+          createdAt: rec.createdAt,
+          songs: [],
+        };
+      }
+
+      grouped[key].songs.push({
+        songName: rec.Song.songName,
+        artist: rec.Song.artist,
+      });
+    });
+
+    const result = Object.values(grouped);
+
+    res.status(200).json({ history: result });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Internal server error",
+      detail: err.message,
+    });
+  }
+};
+
