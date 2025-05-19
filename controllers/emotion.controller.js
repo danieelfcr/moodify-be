@@ -42,3 +42,8 @@ exports.detectEmotion = async (req, res) => {
         res.status(500).json({ error: 'Error in server', detail: error.message });
     }
 };
+
+
+exports.registerTransaction = async (req, res) => {
+    
+}

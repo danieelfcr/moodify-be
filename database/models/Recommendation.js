@@ -5,21 +5,31 @@ class Recommendation extends Model {}
 
 Recommendation.init(
   {
-    trackName: {
-      type: DataTypes.STRING(200),
-      allowNull: false
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'user',
+        key: 'id'
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE'
     },
-    artistName: {
-      type: DataTypes.STRING(200),
-      allowNull: false
-    },
-    spotifyUrl: {
-      type: DataTypes.STRING(500)
+    songId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'song',
+        key: 'id'
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE'
     }
   },
   {
     sequelize,
     modelName: 'Recommendation',
+    tableName: 'recommendation',
     timestamps: true,
     paranoid: true
   }

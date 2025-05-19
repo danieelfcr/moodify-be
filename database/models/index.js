@@ -5,13 +5,17 @@ const { DataTypes } = require('sequelize');
 const User = require('./User.js');
 const Emotion = require('./Emotion.js');
 const Recommendation = require('./Recommendation.js');
+const Song = require('./Song');
 
 //Create relations
-User.hasMany(Emotion, { foreignKey: 'userId' });
-Emotion.belongsTo(User, { foreignKey: 'userId' });
 
-Emotion.hasMany(Recommendation, { foreignKey: 'emotionId' });
-Recommendation.belongsTo(Emotion, { foreignKey: 'emotionId' });
+Song.belongsTo(Emotion, { foreignKey: 'emotionId' });
+
+User.hasMany(Recommendation, { foreignKey: 'userId' });
+Recommendation.belongsTo(User, { foreignKey: 'userId' });
+
+Song.hasMany(Recommendation, { foreignKey: 'songId' });
+Recommendation.belongsTo(Song, { foreignKey: 'songId' });
 
 sequelize.sync({force: false}) //Connect to our DB w/o earasingt
 .then(() => {
@@ -24,5 +28,6 @@ module.exports = {
   sequelize,
   User,
   Emotion,
-  Recommendation
+  Recommendation,
+  Song
 };
