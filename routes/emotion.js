@@ -5,7 +5,5 @@ const {verifyToken} = require('../middlewares/auth.middleware')
 
 /* POST: Analyze emotion */
 router.post('/detect-emotion', verifyToken, emotionController.detectEmotion);
-/* POST: Register transaction */
-router.post('/register-transaction', verifyToken, emotionController.detectEmotion);
 
 module.exports = router;

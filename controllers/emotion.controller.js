@@ -1,4 +1,5 @@
 const rekognition = require('../services/rekognition');
+const { Recommendation } = require('../database/models');
 const { DetectFacesCommand } = require('@aws-sdk/client-rekognition');
 
 exports.detectEmotion = async (req, res) => {
@@ -42,8 +43,3 @@ exports.detectEmotion = async (req, res) => {
         res.status(500).json({ error: 'Error in server', detail: error.message });
     }
 };
-
-
-exports.registerTransaction = async (req, res) => {
-    
-}
