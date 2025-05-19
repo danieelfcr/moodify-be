@@ -1,11 +1,11 @@
 const rekognition = require('../services/rekognition');
 const { Recommendation, Emotion, Song } = require('../database/models');
-const { DetectFacesCommand } = require('@aws-sdk/client-rekognition');
+const { Sequelize } = require('../database/config')
 
-exports.generateRecommendations = async (userId, emotionName, res) => {
+exports.generateRecommendations = async (req, res) => {
     try {
         
-        const emotion = await Emotion.findOne({ where: {name: emotionName}});
+        const emotion = await Emotion.findOne({ where: {label: req.body.emotionName}});
         const songs = await Song.findAll({
             where: {emotionId: emotion.id},
             order: Sequelize.literal('RAND()'),
@@ -16,14 +16,18 @@ exports.generateRecommendations = async (userId, emotionName, res) => {
 
         for (const song of songs) {
             const recommendation = await Recommendation.create({
-            userId: userId,
-            songId: song.id,
-            timestamp: new Date()
+                userId: req.body.userId,
+                songId: song.id
             });
             recommendations.push(song);
         }
 
-        return recommendations;
+        res.status(200).json({
+            recommendations: recommendations.map(song => ({
+                artist: song.artist,
+                songName: song.songName
+            }))
+        });
         
     } catch (error) {
         console.error("Error in server:", error);
