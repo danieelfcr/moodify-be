@@ -1,3 +1,8 @@
+require("./instrument.js");
+
+// All other imports below
+// Import with `import * as Sentry from "@sentry/node"` if you are using ESM
+const Sentry = require("@sentry/node");
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -16,6 +21,11 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+
+app.get("/debug-sentry", function mainHandler(req, res) {
+  throw new Error("My first Sentry error!");
+});
+
 app.use(cors());
 app.use(logger('dev'));
 app.use(express.json({ limit: '10 mb' }));
@@ -28,6 +38,8 @@ app.use('/users', usersRouter);
 app.use('/emotion', emotionRouter);
 app.use('/auth', authRouter);
 app.use('/recommendation', recommendationRouter);
+
+Sentry.setupExpressErrorHandler(app);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
