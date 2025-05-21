@@ -22,11 +22,16 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+app.use(cors({
+  origin: 'https://moodify.click',
+  credentials: true
+}));
+
 app.get("/debug-sentry", function mainHandler(req, res) {
   throw new Error("My first Sentry error!");
 });
 
-app.use(cors());
+
 app.use(logger('dev'));
 app.use(express.json({ limit: '10 mb' }));
 app.use(express.urlencoded({ extended: false }));
