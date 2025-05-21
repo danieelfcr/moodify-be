@@ -33,7 +33,7 @@ app.get("/debug-sentry", function mainHandler(req, res) {
 
 
 app.use(logger('dev'));
-app.use(express.json({ limit: '10 mb' }));
+app.use(express.json({ limit: '80 mb' }));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
